@@ -22,18 +22,24 @@ def test():
     if not token:
         return "X_ACCESS_TOKEN is missing from Render.", 500
 
-    response = requests.get(
-        "https://api.x.com/2/users/me",
-        headers={
-            "Authorization": f"Bearer {token}"
-        },
-        timeout=30
-    )
+    try:
+        response = requests.get(
+            "https://api.x.com/2/users/me",
+            headers={
+                "Authorization": "Bearer " + token
+            },
+            timeout=30
+        )
 
-    return (
-        f"X connection status: {response.status_code}<br>"
-        f"Response: {response.text}"
-    )
+        return (
+            "X connection status: "
+            + str(response.status_code)
+            + "<br>Response: "
+            + response.text
+        ), 200
+
+    except Exception as error:
+        return "Connection error: " + str(error), 500
 
 
 if __name__ == "__main__":
