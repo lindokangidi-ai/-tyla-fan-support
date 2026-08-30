@@ -17,7 +17,7 @@ def health():
 
 @app.route("/test")
 def test():
-    token = os.environ.get("X_ACCESS_TOKEN")
+    token = os.environ.get("X_ACCESS_TOKEN", "").strip()
 
     if not token:
         return "X_ACCESS_TOKEN is missing from Render.", 500
