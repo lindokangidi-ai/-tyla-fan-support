@@ -5,6 +5,12 @@ from flask import Flask
 app = Flask(__name__)
 
 
+def get_token():
+    return "".join(
+        os.environ.get("X_ACCESS_TOKEN", "").split()
+    )
+
+
 @app.route("/")
 def home():
     return "Tyla Fan Support is online."
@@ -17,7 +23,7 @@ def health():
 
 @app.route("/test")
 def test():
-    token = os.environ.get("X_ACCESS_TOKEN", "").strip()
+    token = get_token()
 
     if not token:
         return "X_ACCESS_TOKEN is missing from Render.", 500
@@ -25,7 +31,9 @@ def test():
     try:
         response = requests.get(
             "https://api.x.com/2/users/me",
-            headers={"Authorization": "Bearer " + token},
+            headers={
+                "Authorization": "Bearer " + token
+            },
             timeout=30
         )
 
@@ -34,7 +42,7 @@ def test():
             + str(response.status_code)
             + "<br>Response: "
             + response.text
-        ), 200
+        )
 
     except Exception as error:
         return "Connection error: " + str(error), 500
@@ -42,7 +50,7 @@ def test():
 
 @app.route("/post")
 def post():
-    token = os.environ.get("X_ACCESS_TOKEN", "").strip()
+    token = get_token()
 
     if not token:
         return "X_ACCESS_TOKEN is missing from Render.", 500
@@ -65,12 +73,12 @@ def post():
             + str(response.status_code)
             + "<br>Response: "
             + response.text
-        ), 200
+        )
 
     except Exception as error:
         return "Posting error: " + str(error), 500
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", "10000"))
     app.run(host="0.0.0.0", port=port)
