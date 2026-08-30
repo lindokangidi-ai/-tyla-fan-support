@@ -25,9 +25,7 @@ def test():
     try:
         response = requests.get(
             "https://api.x.com/2/users/me",
-            headers={
-                "Authorization": "Bearer " + token
-            },
+            headers={"Authorization": "Bearer " + token},
             timeout=30
         )
 
@@ -40,6 +38,37 @@ def test():
 
     except Exception as error:
         return "Connection error: " + str(error), 500
+
+
+@app.route("/post")
+def post():
+    token = os.environ.get("X_ACCESS_TOKEN", "").strip()
+
+    if not token:
+        return "X_ACCESS_TOKEN is missing from Render.", 500
+
+    try:
+        response = requests.post(
+            "https://api.x.com/2/tweets",
+            headers={
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            json={
+                "text": "Tyla Fan Support is officially online! 💗🔥"
+            },
+            timeout=30
+        )
+
+        return (
+            "X post status: "
+            + str(response.status_code)
+            + "<br>Response: "
+            + response.text
+        ), 200
+
+    except Exception as error:
+        return "Posting error: " + str(error), 500
 
 
 if __name__ == "__main__":
