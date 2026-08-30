@@ -4,40 +4,36 @@ from flask import Flask
 
 app = Flask(__name__)
 
-X_ACCESS_TOKEN = os.environ.get("X_ACCESS_TOKEN")
-
 
 @app.route("/")
 def home():
-    return "Tyla Fan Support bot is running."
+    return "Tyla Fan Support is online."
+
+
+@app.route("/health")
+def health():
+    return "OK"
 
 
 @app.route("/test")
-def test_post():
-    if not X_ACCESS_TOKEN:
-        return "X_ACCESS_TOKEN is not configured.", 500
+def test():
+    token = os.environ.get("X_ACCESS_TOKEN")
 
-    response = requests.post(
-        "https://api.x.com/2/tweets",
+    if not token:
+        return "X_ACCESS_TOKEN is missing from Render.", 500
+
+    response = requests.get(
+        "https://api.x.com/2/users/me",
         headers={
-            "Authorization": f"Bearer {X_ACCESS_TOKEN}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "text": "Tyla Fan Support is now online! 💗"
+            "Authorization": f"Bearer {token}"
         },
         timeout=30
     )
 
-    if response.status_code == 201:
-        return "Test post published successfully! 🎉"
-
-    return f"X API error: {response.status_code} - {response.text}", 500
-
-
-@app.route("/callback")
-def callback():
-    return "OAuth callback endpoint is running."
+    return (
+        f"X connection status: {response.status_code}<br>"
+        f"Response: {response.text}"
+    )
 
 
 if __name__ == "__main__":
