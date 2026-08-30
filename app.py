@@ -1,14 +1,16 @@
 import os
-from flask import Flask
 import requests
+from flask import Flask
 
 app = Flask(__name__)
 
 X_ACCESS_TOKEN = os.environ.get("X_ACCESS_TOKEN")
 
+
 @app.route("/")
 def home():
     return "Tyla Fan Support bot is running."
+
 
 @app.route("/test")
 def test_post():
